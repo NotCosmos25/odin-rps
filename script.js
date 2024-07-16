@@ -148,8 +148,9 @@ function pushScoreDataToDOM() {
 
     if(scoreDataKey == 0) {
         alert("Hey, you haven't played a single game yet! go play one first!")
-        checkScoresButton.setAttribute("disabled", "");
     }
+
+    checkScoresButton.setAttribute("disabled", "");
 
     for(let i=0; i < scoreDataKey; i++) {
         //convert the string stored in local storage to an object
@@ -183,6 +184,8 @@ function pushScoreDataToDOM() {
 
         scoresTable.append(newTR);
     }
+
+
 }
 
 //testing: doesn't work yet 
