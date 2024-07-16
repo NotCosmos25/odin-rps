@@ -1,27 +1,36 @@
 //define variables
 let playerScore = 0;
 let computerScore = 0;
-let draw = 0;
-let playerChoice = null;
+let draws = 0;
+let playerChoice = undefined;
+let gameStatus = undefined;
+let scoreDataKey = 0;
+
+//traversalKey saved in local storage will be used to traverse through scores
+scoreDataKey = +localStorage.getItem("dataTraversalKey");
 
 //implementing
-const checkScores = [];
+const scoresTable = document.querySelector("#scores-table")
+const checkScoresButton = document.querySelector("#check-score-board-btn");
+const clearScoresButton = document.querySelector("#clear-score-btn");
 
 //DOM: text
 const score = document.querySelector(".score");
 const roundStat = document.querySelector(".round-stat");
+const totalWins= document.querySelector("#total-wins");
+const totalLosses = document.querySelector("#total-losses");
 
 //DOM: buttons
-const choiceButtons = document.querySelector(".game-board").querySelectorAll(".rps-choices");
-console.log(choiceButtons);
+const choiceButtons = document.querySelectorAll(".rps-choices");
 const playButton = document.querySelector(".play-game-btn");
 const playAgainButton = document.querySelector("#play-again-btn");
 const backButton = document.querySelector("#back-btn");
 
+//need bug fix: shows warning on other pages
 for(let i=0; i < 3; i++) {
             choiceButtons[i].addEventListener('click', () => {
                 playRound(playerChoice, getComputerChoice());
-            })
+            });
         }
 
 //onclick 
@@ -41,7 +50,7 @@ function playRound(playerChoice, cChoice) {
     //draw
     if(playerChoice === cChoice) {
         roundStat.innerHTML=`It was a draw! You chose ${playerChoice} and the computer chose ${cChoice}!`;
-        draw++;
+        draws++;
     }
     //player wins
     else if(playerChoice === "rock" && cChoice === "scissors") {
@@ -68,17 +77,15 @@ function playRound(playerChoice, cChoice) {
     //display score to html
     score.innerHTML=`${playerScore}-${computerScore}`;
 
-    //
-
     //check if game finish
     gameLogic();
 }
 
 function gameLogic() {
-    
     //check if game started, so back button is disabled until game finishes
-    if(playerScore > 0 || computerScore > 0 || draw > 0) {
+    if(playerScore > 0 || computerScore > 0 || draws > 0) {
         backButton.setAttribute("disabled", "");
+        playAgainButton.setAttribute("disabled", "");
     }
 
     if(playerScore == 5 || computerScore == 5) {
@@ -86,7 +93,10 @@ function gameLogic() {
             choiceButtons[i].setAttribute("disabled", "");
         }
     
-    //allow play again and back when game finishes
+        //update score
+        updateScoreData();
+
+        //allow play again and back when game finishes
        playAgainButton.removeAttribute("disabled");
        backButton.removeAttribute("disabled");
 
@@ -94,7 +104,7 @@ function gameLogic() {
 }
 
 function playAgain() {
-    playerScore=0; computerScore = 0; draw=0;
+    playerScore=0; computerScore = 0; draws=0;
 
     score.innerHTML=`${playerScore}-${computerScore}`;
 
@@ -102,5 +112,102 @@ function playAgain() {
     for(let i=0; i < 3; i++) {
         choiceButtons[i].removeAttribute("disabled");
     }
+}
+
+//update score
+
+function updateScoreData() {
+
+    //determine win or lose
+    if(playerScore === 5) {
+        gameStatus="win";
+    }
+    if(computerScore === 5) gameStatus = "lost";
+
+    // get date once a game finish
+    let utcDate = new Date().toString();
+
+    let scoreData = {
+        status: gameStatus,
+        score: `${playerScore}-${computerScore}`,
+        draws: draws,
+        time: utcDate.substring(16,24),
+        date: utcDate.substring(4,15),
+    }
+
+    //save score data and update traversal key
+    localStorage.setItem(`scoreKey${scoreDataKey}`, JSON.stringify(scoreData));
+    scoreDataKey++;
+    localStorage.setItem("dataTraversalKey", `${scoreDataKey}`);
+
+}
+
+//pushing data to DOM
+
+function pushScoreDataToDOM() {
+
+    if(scoreDataKey == 0) {
+        alert("Hey, you haven't played a single game yet! go play one first!")
+        checkScoresButton.setAttribute("disabled", "");
+    }
+
+    for(let i=0; i < scoreDataKey; i++) {
+        //convert the string stored in local storage to an object
+        const scoreDataObject = JSON.parse(localStorage.getItem(`scoreKey${i}`));
+
+        const newTR = document.createElement("tr");
+        
+        const gameNumberDataElement= document.createElement("td");
+        gameNumberDataElement.innerText = scoreDataKey + 1;
+        newTR.append(gameNumberDataElement);
+
+        const statusDataElement = document.createElement("td");
+        statusDataElement.innerText= scoreDataObject.status;
+        newTR.append(statusDataElement);
+
+        const scoreDataElement = document.createElement("td");
+        scoreDataElement.innerText = scoreDataObject.score;
+        newTR.append(scoreDataElement);
+        
+        const drawsDataElement = document.createElement("td");
+        drawsDataElement.innerText = scoreDataObject.draws;
+        newTR.append(drawsDataElement);
+
+        const timeDataElement = document.createElement("td");
+        timeDataElement.innerText = scoreDataObject.time; 
+        newTR.append(timeDataElement);
+
+        const dateDataElement = document.createElement("td");
+        dateDataElement.innerText = scoreDataObject.date;
+        newTR.append(dateDataElement);
+
+        scoresTable.append(newTR);
+    }
+}
+
+//testing: doesn't work yet 
+
+/*
+function checkIfPageIsScores() {
+    window.onload = () => {
+        if(document.title.innerText==="RPS Scores") {
+            pushScoreDataToDOM();
+        }
+    }
+}
+*/
+
+function clearScores() {
+
+    if(scoreDataKey === 0 ) {
+        clearScoresButton.setAttribute("disabled", "");
+        return;
+    }
+
+    localStorage.clear();
+    scoreDataKey = 0;
+    //reload page
+    window.location.reload();
+
 }
 

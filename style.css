@@ -1,3 +1,7 @@
+body {
+    font-family: Arial;
+}
+
 button {
     cursor: pointer;
 }
@@ -24,4 +28,28 @@ button {
     display: flex;
     gap: 25px;
     background-color: lightpink;
+}
+
+
+/* scores */
+
+.score-statistics {
+    display: flex;
+    gap: 25px;
+}
+
+#scores-table {
+    background-color: black;
+    border: 1px solid black;
+    margin-bottom: 20px;
+
+}
+
+tr {
+    background-color: white;
+
+}
+
+th {
+    width: 100px;
 }

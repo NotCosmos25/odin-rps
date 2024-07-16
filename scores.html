@@ -5,9 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RPS Scores</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer="true"></script>
 </head>
 <body>
-    <p>Under development :)</p> 
+    
+    <div class="score-statistics">
+        <p id="total-games-description">Total games: <span id=total-games> 10 </span> </p>
+        <p id="total-wins-description">Total wins: <span id="total-wins"> 4</span></p>
+        <p id="total-losses-description">Total losses: <span id="total-losses"> 6 </span></p>
+    </div>
+
+    <table id="scores-table">
+
+        <tr align="center">
+            <th>game no.</th>
+            <th>status</th>
+            <th>score</th>
+            <th>draws</th>
+            <th>time</th>
+            <th>date</th>
+        </tr>
+
+    </table>
+
     <button onclick="location.href='index.html'">back</button>
+    <button id="check-score-board-btn" onclick="pushScoreDataToDOM()">check scores</button>
+    <button id="clear-score-btn" onclick="clearScores()">clear scores</button>
 </body>
 </html>
