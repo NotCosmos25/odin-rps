@@ -1,0 +1,27 @@
+button {
+    cursor: pointer;
+}
+
+.rps-choices {
+    font-size: 50px;
+}
+
+.score-board{
+    display: flex;
+    gap: 5px;
+    background-color: lightblue;
+    height: 50px;
+}
+
+.game-board {
+    margin-top: 10px;
+    display: flex;
+    gap: 20px;
+}
+
+.control-board {
+    margin-top: 20px;
+    display: flex;
+    gap: 25px;
+    background-color: lightpink;
+}
