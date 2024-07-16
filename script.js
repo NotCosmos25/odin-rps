@@ -159,7 +159,7 @@ function pushScoreDataToDOM() {
         const newTR = document.createElement("tr");
         
         const gameNumberDataElement= document.createElement("td");
-        gameNumberDataElement.innerText = scoreDataKey + 1;
+        gameNumberDataElement.innerText = i + 1;
         newTR.append(gameNumberDataElement);
 
         const statusDataElement = document.createElement("td");
