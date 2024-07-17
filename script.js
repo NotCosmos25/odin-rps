@@ -5,9 +5,16 @@ let draws = 0;
 let playerChoice = undefined;
 let gameStatus = undefined;
 let scoreDataKey = 0;
+let totalWinScore = 0;
+let totalLossesScore = 0;
+let totalGamesScore = 0;
 
 //traversalKey saved in local storage will be used to traverse through scores
 scoreDataKey = +localStorage.getItem("dataTraversalKey");
+totalWinScore = +localStorage.getItem("totalWinsKey");
+totalLossesScore = +localStorage.getItem("totalLossesKey");
+totalGamesScore = +localStorage.getItem("totalGamesKey");
+
 
 //implementing
 const scoresTable = document.querySelector("#scores-table")
@@ -17,6 +24,7 @@ const clearScoresButton = document.querySelector("#clear-score-btn");
 //DOM: text
 const score = document.querySelector(".score");
 const roundStat = document.querySelector(".round-stat");
+const totalGames = document.querySelector("#total-games");
 const totalWins= document.querySelector("#total-wins");
 const totalLosses = document.querySelector("#total-losses");
 
@@ -121,8 +129,14 @@ function updateScoreData() {
     //determine win or lose
     if(playerScore === 5) {
         gameStatus="win";
+        totalWinScore++;
     }
-    if(computerScore === 5) gameStatus = "lost";
+    if(computerScore === 5) {
+        gameStatus = "lost";
+        totalLossesScore++;
+    } 
+
+    totalGamesScore++;
 
     // get date once a game finish
     let utcDate = new Date().toString();
@@ -140,11 +154,20 @@ function updateScoreData() {
     scoreDataKey++;
     localStorage.setItem("dataTraversalKey", `${scoreDataKey}`);
 
+    localStorage.setItem("totalWinsKey", `${totalWinScore}`);
+    localStorage.setItem("totalLossesKey", `${totalLossesScore}`);
+    localStorage.setItem("totalGamesKey", `${totalGamesScore}`);
+
+
 }
 
 //pushing data to DOM
 
 function pushScoreDataToDOM() {
+
+    totalGames.innerText = totalGamesScore;
+    totalWins.innerText = totalWinScore;
+    totalLosses.innerText = totalLossesScore;
 
     if(scoreDataKey == 0) {
         alert("Hey, you haven't played a single game yet! go play one first!")
@@ -165,6 +188,7 @@ function pushScoreDataToDOM() {
         const statusDataElement = document.createElement("td");
         statusDataElement.innerText= scoreDataObject.status;
         newTR.append(statusDataElement);
+        //check if win or loss and increment accordingly
 
         const scoreDataElement = document.createElement("td");
         scoreDataElement.innerText = scoreDataObject.score;
@@ -208,7 +232,6 @@ function clearScores() {
     }
 
     localStorage.clear();
-    scoreDataKey = 0;
     //reload page
     window.location.reload();
 
