@@ -310,5 +310,3 @@ function clearScores() {
     window.location.reload();
 
 }
-
-// enemy UI
