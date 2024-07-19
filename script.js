@@ -3,7 +3,6 @@ let playerScore = 0;
 let computerScore = 0;
 let draws = 0;
 let playerChoice = undefined;
-let gameStatus = undefined;
 let scoreDataKey = 0;
 let totalWinScore = 0;
 let totalLossesScore = 0;
@@ -29,14 +28,16 @@ const totalWins= document.querySelector("#total-wins");
 const totalLosses = document.querySelector("#total-losses");
 
 //DOM: buttons
-const choiceButtons = document.querySelectorAll(".rps-choices");
+const playerChoiceButtons = document.querySelectorAll(".player-rps-choices");
+const computerChoiceDivs = document.querySelectorAll(".enemy-rps-choices");
 const playButton = document.querySelector(".play-game-btn");
 const playAgainButton = document.querySelector("#play-again-btn");
 const backButton = document.querySelector("#back-btn");
 
+console.log(playerChoiceButtons);
 //need bug fix: shows warning on other pages
 for(let i=0; i < 3; i++) {
-            choiceButtons[i].addEventListener('click', () => {
+            playerChoiceButtons[i].addEventListener('click', () => {
                 playRound(playerChoice, getComputerChoice());
             });
         }
@@ -44,6 +45,57 @@ for(let i=0; i < 3; i++) {
 //onclick 
 function getPlayerChoice(clickedId) {
     playerChoice = `${clickedId}`;
+}
+
+//know which choice to light up
+//params for roundStatus: "draw", "win", "lost"
+function changeColorOfChoices(roundStatus, winningChoice, losingChoice) {
+    // if player wins: player green, computer red
+    if (roundStatus === "win") {
+        for(let i=0; i < 3; i++) {
+            if(playerChoiceButtons[i].id === winningChoice) {
+                playerChoiceButtons[i].style.backgroundColor = "lightgreen";
+            }
+        } 
+
+        for(let i=0; i < 3; i++) {
+            if(computerChoiceDivs[i].id === losingChoice) {
+                computerChoiceDivs[i].style.backgroundColor = "rgb(255,100,100)";
+            }
+        }
+    }
+
+    if (roundStatus === "lost") {
+        for(let i=0; i < 3; i++) {
+            if(playerChoiceButtons[i].id === losingChoice) {
+                playerChoiceButtons[i].style.backgroundColor = "rgb(255,100,100)";
+            }
+        }
+
+        for(let i=0; i < 3; i++) {
+            if(computerChoiceDivs[i].id === winningChoice) {
+                computerChoiceDivs[i].style.backgroundColor = "lightgreen";
+            }
+        }
+    }
+
+    //if draw player defaults to winning choice
+    if(roundStatus === "draw") {
+        for(let i=0; i < 3; i++) {
+            if(playerChoiceButtons[i].id === winningChoice) {
+                playerChoiceButtons[i].style.backgroundColor = "grey";
+            }
+        }
+
+        for(let i=0; i < 3; i++) {
+            if(computerChoiceDivs[i].id === losingChoice) {
+                computerChoiceDivs[i].style.backgroundColor = "grey";
+            }
+        }
+
+    }
+
+
 }
 
 //game logic
@@ -55,31 +107,44 @@ function getComputerChoice() {
 }
 
 function playRound(playerChoice, cChoice) {
+    
+    //recolor everything before playing round
+    for(let i=0; i < 3; i++) {
+        playerChoiceButtons[i].style.backgroundColor = "rgb(239,239,239)";
+        computerChoiceDivs[i].style.backgroundColor = "rgb(239,239,239";
+    }
+
     //draw
     if(playerChoice === cChoice) {
         roundStat.innerHTML=`It was a draw! You chose ${playerChoice} and the computer chose ${cChoice}!`;
         draws++;
+        changeColorOfChoices("draw", playerChoice, cChoice);
+
     }
     //player wins
     else if(playerChoice === "rock" && cChoice === "scissors") {
         roundStat.innerHTML = `You won! You chose ${playerChoice} and the computer chose ${cChoice}!`;
         playerScore++;
+        changeColorOfChoices("win", playerChoice, cChoice);
     }
 
     else if(playerChoice === "paper" && cChoice === "rock") {
         roundStat.innerHTML = `You won! You chose ${playerChoice} and the computer chose ${cChoice}!`;
         playerScore++;
+        changeColorOfChoices("win", playerChoice, cChoice);
     }
 
     else if(playerChoice === "scissors" && cChoice === "paper") {
         roundStat.innerHTML = `You won! You chose ${playerChoice} and the computer chose ${cChoice}!`;
         playerScore++;
+        changeColorOfChoices("win", playerChoice, cChoice);
     }
 
     //computer wins 
     else {
         roundStat.innerHTML = `You lost! You chose ${playerChoice} and the computer chose ${cChoice}!`;
         computerScore++;
+        changeColorOfChoices("lost", cChoice, playerChoice);
     }
 
     //display score to html
@@ -98,7 +163,8 @@ function gameLogic() {
 
     if(playerScore == 5 || computerScore == 5) {
         for(let i=0; i < 3; i++) {
-            choiceButtons[i].setAttribute("disabled", "");
+            playerChoiceButtons[i].setAttribute("disabled", "");
+            computerChoiceDivs[i].style.opacity = 0.5;
         }
     
         //update score
@@ -118,7 +184,10 @@ function playAgain() {
 
     
     for(let i=0; i < 3; i++) {
-        choiceButtons[i].removeAttribute("disabled");
+        playerChoiceButtons[i].style.backgroundColor="rgb(239,239,239)";
+        computerChoiceDivs[i].style.backgroundColor="rgb(239,239,239)";
+        playerChoiceButtons[i].removeAttribute("disabled");
+        computerChoiceDivs[i].style.opacity = 1;
     }
 }
 
@@ -175,7 +244,7 @@ function pushScoreDataToDOM() {
 
     checkScoresButton.setAttribute("disabled", "");
 
-    for(let i=0; i < scoreDataKey; i++) {
+    for(let i= scoreDataKey - 1; i >= 0; i--) {
         //convert the string stored in local storage to an object
         const scoreDataObject = JSON.parse(localStorage.getItem(`scoreKey${i}`));
 
@@ -231,9 +300,15 @@ function clearScores() {
         return;
     }
 
+    if(confirm("Are you sure you want to clear your scores? They will be lost FOREVER!")) {
+    }
+
+    else return;
+
     localStorage.clear();
     //reload page
     window.location.reload();
 
 }
 
+// enemy UI

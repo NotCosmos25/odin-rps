@@ -19,9 +19,19 @@
         </div>
 
         <div class="game-board">
-            <button id="rock" class="rps-choices" onclick="getPlayerChoice(this.id)">&#9994</button>
-            <button id="paper" class="rps-choices" onclick="getPlayerChoice(this.id)">&#9995</button>
-            <button id="scissors" class="rps-choices" onclick="getPlayerChoice(this.id)">&#9996</button>
+            <p id="displayed-choice">Your Choice: </p>
+            <button id="rock" class="player-rps-choices" class="rps-choices"  onclick="getPlayerChoice(this.id)">&#9994</button>
+            <button id="paper" class="player-rps-choices" class="rps-choices"  onclick="getPlayerChoice(this.id)">&#9995</button>
+            <button id="scissors" class="player-rps-choices" class="rps-choices"  onclick="getPlayerChoice(this.id)">&#9996</button>
+        </div>
+
+        <div class="enemy-game-board">
+            <p id="displayed-choice">Computer Choice: </p>
+            <div id="rock" class="enemy-rps-choices" class="rps-choices" >&#9994</div>
+            <div id="paper" class="enemy-rps-choices" class="rps-choices" >&#9995</div>
+            <div id="scissors" class="enemy-rps-choices" class="rps-choices" >&#9996</div>
+
+
         </div>
 
         <div class="control-board">
